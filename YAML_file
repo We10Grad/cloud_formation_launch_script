@@ -1,0 +1,67 @@
+# Create VPC
+Type: AWS::EC2::VPC
+Properties:
+  CidrBlock: 10.10.0.0/16
+  EnableDnsHostnames: Boolean
+  EnableDnsSupport: Boolean
+  InstanceTenancy: String
+  Ipv4IpamPoolId: String
+  Ipv4NetmaskLength: Integer
+  Tags: 
+    - Tag
+
+
+
+# Create Auto Scaling Group
+Type: AWS::AutoScaling::AutoScalingGroup
+Properties:
+  AutoScalingGroupName: String
+  AvailabilityZoneDistribution: 
+    AvailabilityZoneDistribution
+  AvailabilityZoneImpairmentPolicy: 
+    AvailabilityZoneImpairmentPolicy
+  AvailabilityZones: 
+    - String
+  CapacityRebalance: Boolean
+  CapacityReservationSpecification: 
+    CapacityReservationSpecification
+  Context: String
+  Cooldown: String
+  DefaultInstanceWarmup: Integer
+  DesiredCapacity: String
+  DesiredCapacityType: String
+  HealthCheckGracePeriod: Integer
+  HealthCheckType: String
+  InstanceId: String
+  InstanceMaintenancePolicy: 
+    InstanceMaintenancePolicy
+  LaunchConfigurationName: String
+  LaunchTemplate: 
+    LaunchTemplateSpecification
+  LifecycleHookSpecificationList: 
+    - LifecycleHookSpecification
+  LoadBalancerNames: 
+    - String
+  MaxInstanceLifetime: Integer
+  MaxSize: String
+  MetricsCollection: 
+    - MetricsCollection
+  MinSize: String
+  MixedInstancesPolicy: 
+    MixedInstancesPolicy
+  NewInstancesProtectedFromScaleIn: Boolean
+  NotificationConfigurations: 
+    - NotificationConfiguration
+  PlacementGroup: String
+  ServiceLinkedRoleARN: String
+  SkipZonalShiftValidation: Boolean
+  Tags: 
+    - TagProperty
+  TargetGroupARNs: 
+    - String
+  TerminationPolicies: 
+    - String
+  TrafficSources: 
+    - TrafficSourceIdentifier
+  VPCZoneIdentifier: 
+    - String
