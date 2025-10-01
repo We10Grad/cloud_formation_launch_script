@@ -9,18 +9,16 @@ Parameters:
 
 Resources:
 
-
 # Create VPC
-Type: AWS::EC2::VPC
-Properties:
-  CidrBlock: 10.10.0.0/16
-  EnableDnsHostnames: Boolean
-  EnableDnsSupport: Boolean
-  InstanceTenancy: String
-  Ipv4IpamPoolId: String
-  Ipv4NetmaskLength: Integer
-  Tags: 
-    - Tag
+  Type: AWS::EC2::VPC
+  Properties:
+    CidrBlock: 10.10.0.0/16
+    EnableDnsHostnames: Boolean
+    EnableDnsSupport: Boolean
+    InstanceTenancy: String
+    Ipv4IpamPoolId: String
+    Ipv4NetmaskLength: Integer
+      
 
 # Create public subnets
 
@@ -29,9 +27,9 @@ Properties:
 # Attach internet gateway to route table 
 
 # Create launch template for EC2 instances
-Type: AWS::EC2::LaunchTemplate
-Properties:
-  LaunchTemplateData: 
+  Type: AWS::EC2::LaunchTemplate
+  Properties:
+    LaunchTemplateData: 
     LaunchTemplateData
   LaunchTemplateName: String
   TagSpecifications: 
