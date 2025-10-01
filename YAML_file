@@ -79,7 +79,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      AvailabilityZone: !Select [ 2, !GetAZs  '' ]
       CidrBlock: !Ref PublicSubnet3CIDR
       MapPublicIpOnLaunch: true
       Tags:
@@ -114,7 +114,7 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
 # Associate public subent 3 with route table
-   PublicSubnet3RouteTableAssociation:
+  PublicSubnet3RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PublicRouteTable
@@ -152,85 +152,3 @@ Outputs:
     Description: Security group with no ingress rule
     Value: !Ref NoIngressSecurityGroup
       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Create launch template for EC2 instances
-  Type: AWS::EC2::LaunchTemplate
-  Properties:
-    LaunchTemplateData: 
-    LaunchTemplateData
-  LaunchTemplateName: String
-  TagSpecifications: 
-    - LaunchTemplateTagSpecification
-  VersionDescription: String
-
-
-# Create Auto Scaling Group
-Type: AWS::AutoScaling::AutoScalingGroup
-Properties:
-  AutoScalingGroupName: String
-  AvailabilityZoneDistribution: 
-    AvailabilityZoneDistribution
-  AvailabilityZoneImpairmentPolicy: 
-    AvailabilityZoneImpairmentPolicy
-  AvailabilityZones: 
-    - String
-  CapacityRebalance: Boolean
-  CapacityReservationSpecification: 
-    CapacityReservationSpecification
-  Context: String
-  Cooldown: String
-  DefaultInstanceWarmup: Integer
-  DesiredCapacity: String
-  DesiredCapacityType: String
-  HealthCheckGracePeriod: Integer
-  HealthCheckType: String
-  InstanceId: String
-  InstanceMaintenancePolicy: 
-    InstanceMaintenancePolicy
-  LaunchConfigurationName: String
-  LaunchTemplate: 
-    LaunchTemplateSpecification
-  LifecycleHookSpecificationList: 
-    - LifecycleHookSpecification
-  LoadBalancerNames: 
-    - String
-  MaxInstanceLifetime: Integer
-  MaxSize: String
-  MetricsCollection: 
-    - MetricsCollection
-  MinSize: String
-  MixedInstancesPolicy: 
-    MixedInstancesPolicy
-  NewInstancesProtectedFromScaleIn: Boolean
-  NotificationConfigurations: 
-    - NotificationConfiguration
-  PlacementGroup: String
-  ServiceLinkedRoleARN: String
-  SkipZonalShiftValidation: Boolean
-  Tags: 
-    - TagProperty
-  TargetGroupARNs: 
-    - String
-  TerminationPolicies: 
-    - String
-  TrafficSources: 
-    - TrafficSourceIdentifier
-  VPCZoneIdentifier: 
-    - String
