@@ -1,3 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create a VPC with public subnets in three AZs, a EC2 launch template with user data for an apache webserver, an ELB, an ASG, and security groups. 
+
+Parameters:
+  EnvironmentName:Aurora Digital Network
+    Type: String
+    Default: Development
+    Description: Environment name prefix
+
+Resources:
+
+
 # Create VPC
 Type: AWS::EC2::VPC
 Properties:
@@ -10,6 +22,21 @@ Properties:
   Tags: 
     - Tag
 
+# Create public subnets
+
+# Create internet gateway
+
+# Attach internet gateway to route table 
+
+# Create launch template for EC2 instances
+Type: AWS::EC2::LaunchTemplate
+Properties:
+  LaunchTemplateData: 
+    LaunchTemplateData
+  LaunchTemplateName: String
+  TagSpecifications: 
+    - LaunchTemplateTagSpecification
+  VersionDescription: String
 
 
 # Create Auto Scaling Group
