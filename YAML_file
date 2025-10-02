@@ -292,6 +292,10 @@ Outputs:
   LaunchTemplateId:
     Description: Launch Template ID
     Value: !Ref AuroraLaunchTemplate
+
+  AutoScalingGroupName:
+    Description: Auto Scaling Group Name
+    Value: !Ref AuroraASG
     
   LoadBalancerDNS:
     Description: Load Balancer DNS Name
