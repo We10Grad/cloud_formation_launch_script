@@ -84,7 +84,7 @@ Resources:
   PublicSubnet3:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref VPC
+    VpcId: !Ref VPC
       AvailabilityZone: !Select [ 2, !GetAZs  '' ]
       CidrBlock: !Ref PublicSubnet3CIDR
       MapPublicIpOnLaunch: true
@@ -131,21 +131,22 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet3
 
+  
   # Create security group for EC2 instances
-WebServerSecurityGroup:
-  Type: AWS::EC2::SecurityGroup
-  Properties:
-    GroupName: "ec2-security-group"
-    GroupDescription: "Allow traffic from ALB"
-    VpcId: !Ref VPC
-    SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        SourceSecurityGroupId: !Ref ALBSecurityGroup
-    SecurityGroupEgress:
-      - IpProtocol: -1 #Allows all protocols 
-        CidrIp: 0.0.0.0/0
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "ec2-security-group"
+      GroupDescription: "Allow traffic from ALB"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
 
   # Create launch template
   AuroraLaunchTemplate:
@@ -176,45 +177,42 @@ WebServerSecurityGroup:
             Tags:
               - Key: Name
                 Value: !Ref EnvironmentName
- 
+
 # Create security group for ALB
-ALBSecurityGroup:
-  Type: AWS::EC2::SecurityGroup
-  Properties:
-    GroupName: "ALB-security-group"
-    GroupDescription: "Allow http traffic to ALB"
-    VpcId: !Ref VPC
-    SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        CidrIp: 0.0.0.0/0
-    SecurityGroupEgress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        DestinationSecurityGroupId: !Ref WebServerSecurityGroup
-  
-# Create Application Load Balancer
-  myLoadBalancer:
-    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      Name: Aurora Digital ALB
+      GroupName: "ALB-security-group"
+      GroupDescription: "Allow http traffic to ALB"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          DestinationSecurityGroupId: !Ref WebServerSecurityGroup
+
+  # Create Application Load Balancer
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: AuroraDigitalALB
       Type: application
-      Scheme: internal
+      Scheme: internet-facing
       Subnets: 
-        - !Ref Publicsubnet1
-        - !Ref Publicsubnet2
-        - !Ref Publicsubnet3
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+        - !Ref PublicSubnet3
       SecurityGroups: 
         - !Ref ALBSecurityGroup
-      TagSpecifications:
-            Tags:
-              - Key: Name
-                Value: !Ref EnvironmentName
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
 
-
- 
 Outputs:
   VPCId:
     Description: VPC ID
@@ -235,3 +233,7 @@ Outputs:
   LaunchTemplateId:
     Description: Launch Template ID
     Value: !Ref AuroraLaunchTemplate
+    
+  LoadBalancerDNS:
+    Description: Load Balancer DNS Name
+    Value: !GetAtt MyLoadBalancer.DNSName
