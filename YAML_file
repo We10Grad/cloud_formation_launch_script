@@ -131,31 +131,21 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet3
 
-  # Create vpc security group
-  NoIngressSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: "vpc-security-group"
-      GroupDescription: "Security group with no ingress rule"
-      VpcId: !Ref VPC
-
-  # Create EC2 security group
-  WebServerSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: "ec2-security-group"
-      GroupDescription: "Allow http to client host"
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
+  # Create security group for EC2 instances
+WebServerSecurityGroup:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+    GroupName: "ec2-security-group"
+    GroupDescription: "Allow traffic from ALB"
+    VpcId: !Ref VPC
+    SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        SourceSecurityGroupId: !Ref ALBSecurityGroup
+    SecurityGroupEgress:
+      - IpProtocol: -1 #Allows all protocols 
+        CidrIp: 0.0.0.0/0
 
   # Create launch template
   AuroraLaunchTemplate:
@@ -187,4 +177,61 @@ Resources:
               - Key: Name
                 Value: !Ref EnvironmentName
  
+# Create security group for ALB
+ALBSecurityGroup:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+    GroupName: "ALB-security-group"
+    GroupDescription: "Allow http traffic to ALB"
+    VpcId: !Ref VPC
+    SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+    SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        DestinationSecurityGroupId: !Ref WebServerSecurityGroup
+  
+# Create Application Load Balancer
+  myLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Name: Aurora Digital ALB
+      Type: application
+      Scheme: internal
+      Subnets: 
+        - !Ref Publicsubnet1
+        - !Ref Publicsubnet2
+        - !Ref Publicsubnet3
+      SecurityGroups: 
+        - !Ref ALBSecurityGroup
+      TagSpecifications:
+            Tags:
+              - Key: Name
+                Value: !Ref EnvironmentName
+
+
+ 
 Outputs:
+  VPCId:
+    Description: VPC ID
+    Value: !Ref VPC
+    
+  PublicSubnet1Id:
+    Description: Public Subnet 1 ID
+    Value: !Ref PublicSubnet1
+    
+  PublicSubnet2Id:
+    Description: Public Subnet 2 ID
+    Value: !Ref PublicSubnet2
+    
+  PublicSubnet3Id:
+    Description: Public Subnet 3 ID
+    Value: !Ref PublicSubnet3
+    
+  LaunchTemplateId:
+    Description: Launch Template ID
+    Value: !Ref AuroraLaunchTemplate
