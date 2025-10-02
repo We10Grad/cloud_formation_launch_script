@@ -131,45 +131,44 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet3
 
+  # Create security group for ALB
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "ALB-security-group"
+      GroupDescription: "Allow http traffic to ALB"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
 
- # Create security group for ALB
-ALBSecurityGroup:
-  Type: AWS::EC2::SecurityGroup
-  Properties:
-    GroupName: "ALB-security-group"
-    GroupDescription: "Allow http traffic to ALB"
-    VpcId: !Ref VPC
-    SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        CidrIp: 0.0.0.0/0
+  # Create security group for EC2 instances
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "ec2-security-group"
+      GroupDescription: "Allow traffic from ALB"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
 
-# Create security group for EC2 instances
-WebServerSecurityGroup:
-  Type: AWS::EC2::SecurityGroup
-  Properties:
-    GroupName: "ec2-security-group"
-    GroupDescription: "Allow traffic from ALB"
-    VpcId: !Ref VPC
-    SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        SourceSecurityGroupId: !Ref ALBSecurityGroup
-    SecurityGroupEgress:
-      - IpProtocol: -1
-        CidrIp: 0.0.0.0/0
-
-# Add egress rule to ALB to route traffic from HTTP to ALB then to web servers
-ALBToWebServerEgress:
-  Type: AWS::EC2::SecurityGroupEgress
-  Properties:
-    GroupId: !Ref ALBSecurityGroup
-    IpProtocol: tcp
-    FromPort: 80
-    ToPort: 80
-    DestinationSecurityGroupId: !Ref WebServerSecurityGroup
+  # Add egress rule from ALB to WebServer
+  ALBToWebServerEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref ALBSecurityGroup
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      DestinationSecurityGroupId: !Ref WebServerSecurityGroup
 
   # Create launch template
   AuroraLaunchTemplate:
@@ -200,7 +199,7 @@ ALBToWebServerEgress:
             Tags:
               - Key: Name
                 Value: !Ref EnvironmentName
-
+  
   # Create Application Load Balancer
   MyLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
