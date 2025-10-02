@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Create a VPC with public subnets in three AZs, a EC2 launch template with user data for an apache webserver, an ELB, an ASG, and security groups.
+Description: Create a VPC with public subnets in three AZs, an EC2 launch template with user data for an apache webserver, an ELB, an ASG, and security groups.
 
 Parameters:
   EnvironmentName:
