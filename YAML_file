@@ -221,7 +221,7 @@ Resources:
   WebServerTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Sub ${EnvironmentName}-TG
+      Name: AuroraDigital-TG
       Port: 80
       Protocol: HTTP
       VpcId: !Ref VPC
