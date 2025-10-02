@@ -201,7 +201,7 @@ Resources:
                 Value: !Ref EnvironmentName
   
   # Create Application Load Balancer
-  AuroraLoadBalancer:
+  MyLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Name: AuroraDigitalALB
@@ -216,8 +216,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref EnvironmentName
-  
-# Create Target Group for ALB
+
+  # Create Target Group for ALB
   WebServerTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -271,7 +271,6 @@ Resources:
         - Key: Name
           Value: !Sub ${EnvironmentName}-ASG-Instance
           PropagateAtLaunch: true
-
 
 Outputs:
   VPCId:
