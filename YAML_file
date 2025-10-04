@@ -1,12 +1,17 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Create a VPC with public subnets in three AZs, an EC2 launch template with user data for an apache webserver, an ELB, an ASG, and security groups.
+Description: Create a VPC with public subnets in three AZs, a EC2 launch template with user data for an apache webserver, an ELB, an ASG, and security groups.
 
 Parameters:
   EnvironmentName:
     Type: String                           
     Default: Aurora Digital       
-    Description: Environment name prefix   
+    Description: Environment name prefix
+  
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: EC2 Key Pair for SSH access
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair
    
   VpcCIDR:
     Type: String                           
@@ -156,6 +161,11 @@ Resources:
           FromPort: 80
           ToPort: 80
           SourceSecurityGroupId: !Ref ALBSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: SSH access for troubleshooting
       SecurityGroupEgress:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
@@ -178,6 +188,7 @@ Resources:
       LaunchTemplateData:
         ImageId: ami-0360c520857e3138f
         InstanceType: t2.micro
+        KeyName: !Ref KeyPairName
         SecurityGroupIds:
           - !Ref WebServerSecurityGroup
         UserData:
@@ -292,11 +303,19 @@ Outputs:
   LaunchTemplateId:
     Description: Launch Template ID
     Value: !Ref AuroraLaunchTemplate
-
-  AutoScalingGroupName:
-    Description: Auto Scaling Group Name
-    Value: !Ref AuroraASG
     
   LoadBalancerDNS:
     Description: Load Balancer DNS Name
     Value: !GetAtt MyLoadBalancer.DNSName
+  
+  TargetGroupARN:
+    Description: Target Group ARN
+    Value: !Ref WebServerTargetGroup
+  
+  ALBSecurityGroupId:
+    Description: ALB Security Group ID
+    Value: !Ref ALBSecurityGroup
+  
+  WebServerSecurityGroupId:
+    Description: Web Server Security Group ID
+    Value: !Ref WebServerSecurityGroup
